@@ -27,6 +27,54 @@ export default class ProductDetails {
   }
 }
 
+
+// function productDetailsTemplate(product) {
+//   // Title
+//   document.querySelector("h2").textContent =
+//     product.Category.charAt(0).toUpperCase() + product.Category.slice(1);
+
+//   // Basic info
+//   document.querySelector("#p-brand").textContent = product.Brand.Name;
+//   document.querySelector("#p-name").textContent = product.NameWithoutBrand;
+
+//   // Image
+//   const productImage = document.querySelector("#p-image");
+//   productImage.src = product.Images.PrimaryExtraLarge;
+//   productImage.alt = product.NameWithoutBrand;
+
+//   // ======= DISCOUNT LOGIC =======
+//   const original = Number(product.SuggestedRetailPrice);
+//   const final = Number(product.FinalPrice);
+
+//   let discountPercent = 0;
+//   if (original > final) {
+//     discountPercent = Math.round(((original - final) / original) * 100);
+//   }
+
+//   // Format final price to EUR (your old system)
+//   const euroPrice = new Intl.NumberFormat("de-DE", {
+//     style: "currency",
+//     currency: "EUR",
+//   }).format(final * 0.85);
+
+//   document.querySelector("#p-price").textContent = euroPrice;
+
+//   if (discountPercent > 0) {
+//     const badge = document.createElement("div");
+//     badge.classList.add("discount-badge");
+//     badge.textContent = `-${discountPercent}% OFF`;
+//     document.querySelector(".product-detail").prepend(badge);
+//   }
+
+//   document.querySelector("#p-color").textContent =
+//   product.Colors[0].ColorName;
+//   document.querySelector("#p-description").innerHTML =
+//   product.DescriptionHtmlSimple;
+//   document.querySelector("#add-to-cart").dataset.id = product.Id;
+// }
+
+
+
 function productDetailsTemplate(product) {
   document.querySelector("h2").textContent = product.Category.charAt(0).toUpperCase() + product.Category.slice(1);
   document.querySelector("#p-brand").textContent = product.Brand.Name;
@@ -45,3 +93,4 @@ function productDetailsTemplate(product) {
 
   document.querySelector("#add-to-cart").dataset.id = product.Id;
 }
+
