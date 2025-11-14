@@ -1,4 +1,4 @@
-
+ 
 import ProductData from "./ProductData.mjs";
 import ProductDetails from "./productDetails.mjs";
 import { loadHeaderFooter } from "./utils.mjs";
