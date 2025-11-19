@@ -133,9 +133,26 @@ button {
 }
 
 .cart:hover svg {
-  fill: gray;
+  fill: rgb(232, 190, 20);
+}
+/* .hide {
+    display: none !important;
+} */
+
+/* Optional styling for the footer area */
+.cart-footer {
+    display: flex;
+    justify-content: flex-end; 
+    padding: 1em;
+    margin-top: 1.5em;
+    
+    border-top: 2px solid var(--light-grey); 
 }
 
+.cart-total {
+    font-weight: bold;
+   
+}
 /* End cart icon styles */
 
 .mission {

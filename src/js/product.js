@@ -1,13 +1,11 @@
- 
-import ProductData from "./ProductData.mjs";
+import { getParam, loadHeaderFooter } from "./utils.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 import ProductDetails from "./product-Details.mjs";
-import { loadHeaderFooter } from "./utils.mjs";
 
 loadHeaderFooter();
 
-const productId = new URLSearchParams(window.location.search).get("product");
+const dataSource = new ExternalServices("tents");
+const productID = getParam("product");
 
-const dataSource = new ProductData();
-const productDetails = new ProductDetails(productId, dataSource);
-
-productDetails.init();
+const product = new ProductDetails(productID, dataSource);
+product.init();
