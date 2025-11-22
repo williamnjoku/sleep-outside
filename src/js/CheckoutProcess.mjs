@@ -7,6 +7,7 @@ import {
 import ExternalServices from "./ExternalServices.mjs";
 
 const services = new ExternalServices();
+
 function formDataToJSON(formElement) {
   const formData = new FormData(formElement),
     convertedJSON = {};
@@ -25,7 +26,7 @@ function packageItems(items) {
       id: item.Id,
       price: item.FinalPrice,
       name: item.Name,
-      quantity: 1,
+      quantity: item.Quantity || 1, 
     };
   });
   return simplifiedItems;
@@ -41,10 +42,12 @@ export default class CheckoutProcess {
     this.tax = 0;
     this.orderTotal = 0;
   }
+  
   init() {
     this.list = getLocalStorage(this.key);
-    this.calculateItemSummary();
+    this.calculateOrdertotal(); 
   }
+  
   calculateItemSummary() {
     const summaryElement = document.querySelector(
       this.outputSelector + " #cartTotal"
@@ -52,22 +55,36 @@ export default class CheckoutProcess {
     const itemNumElement = document.querySelector(
       this.outputSelector + " #num-items"
     );
-    itemNumElement.innerText = this.list.length;
-    // calculate the total of all the items in the cart
-    const amounts = this.list.map((item) => item.FinalPrice);
+    
+    const totalItems = this.list.reduce((sum, item) => sum + (item.Quantity || 1), 0);
+    
+    itemNumElement.innerText = totalItems;
+    
+    const amounts = this.list.map((item) => item.FinalPrice * (item.Quantity || 1));
+    
     this.itemTotal = amounts.reduce((sum, item) => sum + item);
-    summaryElement.innerText = "$" + this.itemTotal;
+    // Ensure summary is displayed with 2 decimal places
+    summaryElement.innerText = "$" + this.itemTotal.toFixed(2); 
   }
+  
   calculateOrdertotal() {
-    this.shipping = 10 + (this.list.length - 1) * 2;
+    this.calculateItemSummary(); 
+    
+    const totalItems = this.list.reduce((sum, item) => sum + (item.Quantity || 1), 0);
+    
+    // Shipping: $10 for the first item, $2 for each subsequent item
+    this.shipping = 10 + (totalItems > 0 ? (totalItems - 1) * 2 : 0);
     this.tax = (this.itemTotal * 0.06).toFixed(2);
+    
     this.orderTotal = (
       parseFloat(this.itemTotal) +
       parseFloat(this.shipping) +
       parseFloat(this.tax)
     ).toFixed(2);
+    
     this.displayOrderTotals();
   }
+  
   displayOrderTotals() {
     const shipping = document.querySelector(this.outputSelector + " #shipping");
     const tax = document.querySelector(this.outputSelector + " #tax");
@@ -78,22 +95,23 @@ export default class CheckoutProcess {
     tax.innerText = "$" + this.tax;
     orderTotal.innerText = "$" + this.orderTotal;
   }
+  
   async checkout() {
     const formElement = document.forms["checkout"];
 
     const json = formDataToJSON(formElement);
-    // add totals, and item details
     json.orderDate = new Date();
     json.orderTotal = this.orderTotal;
     json.tax = this.tax;
     json.shipping = this.shipping;
-    json.items = packageItems(this.list);
+    json.items = packageItems(this.list); // Uses the updated packageItems
     console.log(json);
+    
     try {
       const res = await services.checkout(json);
       console.log(res);
       setLocalStorage("so-cart", []);
-      location.assign("./success.html");
+      location.assign("/checkout/success.html");
     } catch (err) {
       // get rid of any preexisting alerts.
       removeAllAlerts();
